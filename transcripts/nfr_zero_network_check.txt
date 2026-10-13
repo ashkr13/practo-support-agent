@@ -1,0 +1,9 @@
+Zero-network evidence: tests/test_offline.py blocks socket.connect and runs a full crew kickoff.
+
+### Run 1: telemetry deliberately ENABLED (CREWAI_DISABLE_TELEMETRY=false OTEL_SDK_DISABLED=false)
+E       AssertionError: outbound connections attempted: [('167.99.24.219', 4319), ('167.99.24.219', 4319), ('167.99.24.219', 4319)]
+tests/test_offline.py:33: AssertionError
+1 failed in 23.73s
+
+### Run 2: project settings (CREWAI_DISABLE_TELEMETRY=true OTEL_SDK_DISABLED=true, Chroma anonymized_telemetry=False)
+1 passed in 8.39s

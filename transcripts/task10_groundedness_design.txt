@@ -1,0 +1,44 @@
+Development questions only (eval set B is held out).
+A  = strict: every question term in retrieved top-3 context            (rejected in Task 10)
+B  = v1: similarity AND no word absent from the KB vocabulary           (overfitted: 5/12 wrong on set A)
+C  = v2 FINAL: similarity AND cross-encoder answerability >= threshold
+
+IN-SCOPE (should answer)
+  A=refuse  B=answer  C=answer  sim=0.787  How many hours before my appointment can I cancel without paying anything?
+      C reason: similarity above threshold and answerability 5.48 >= -1.04
+  A=answer  B=answer  C=answer  sim=0.640  How much does it cost to see a cardiologist?
+      C reason: similarity above threshold and answerability 5.11 >= -1.04
+  A=answer  B=answer  C=answer  sim=0.711  How long will my thyroid test results take?
+      C reason: similarity above threshold and answerability 6.06 >= -1.04
+  A=answer  B=answer  C=answer  sim=0.600  Can I get my antibiotics refilled without seeing the doctor again?
+      C reason: similarity above threshold and answerability 2.53 >= -1.04
+  A=answer  B=answer  C=answer  sim=0.799  Is a follow-up visit free if I go back to the same doctor within a week?
+      C reason: similarity above threshold and answerability 8.19 >= -1.04
+  A=refuse  B=answer  C=refuse  sim=0.675  I have chest pain, can I just book a video consultation?
+      C reason: retrieved context does not answer the question (cross-encoder answerability -1.67 < -1.04)
+  A=answer  B=answer  C=answer  sim=0.586  Can a doctor come to my home if I am 70 years old?
+      C reason: similarity above threshold and answerability 1.95 >= -1.04
+  A=answer  B=answer  C=answer  sim=0.589  How do I file an insurance claim for my consultation?
+      C reason: similarity above threshold and answerability 2.55 >= -1.04
+  A=refuse  B=answer  C=answer  sim=0.587  Will Practo share my medical records with anyone?
+      C reason: similarity above threshold and answerability 5.60 >= -1.04
+  A=answer  B=answer  C=answer  sim=0.687  How do I get a second opinion from another specialist?
+      C reason: similarity above threshold and answerability 8.72 >= -1.04
+  A=refuse  B=answer  C=answer  sim=0.615  Can I reschedule APT-1003, and what is the cancellation window?
+      C reason: similarity above threshold and answerability 1.33 >= -1.04
+NEAR-DOMAIN OOS (should refuse)
+  A=refuse  B=refuse  C=refuse  sim=0.213  Do you offer dental implants?
+      C reason: top-1 similarity 0.2128 below threshold 0.37
+  A=refuse  B=refuse  C=refuse  sim=0.522  What are the visiting hours for admitted patients?
+      C reason: retrieved context does not answer the question (cross-encoder answerability -2.82 < -1.04)
+  A=refuse  B=refuse  C=refuse  sim=0.501  Can I pay my consultation fee with cryptocurrency?
+      C reason: retrieved context does not answer the question (cross-encoder answerability -6.72 < -1.04)
+  A=refuse  B=refuse  C=refuse  sim=0.656  What is the parking fee at the clinic?
+      C reason: retrieved context does not answer the question (cross-encoder answerability -1.48 < -1.04)
+  A=refuse  B=refuse  C=refuse  sim=0.163  Which vaccines does my baby need at 6 months?
+      C reason: top-1 similarity 0.1629 below threshold 0.37
+
+SUMMARY
+  rule A: in-scope answered 7/11   near-domain refused 5/5
+  rule B: in-scope answered 11/11   near-domain refused 5/5
+  rule C: in-scope answered 10/11   near-domain refused 5/5

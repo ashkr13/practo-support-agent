@@ -1,0 +1,80 @@
+CrewResponse JSON schema (wired as output_pydantic on the Composer task):
+{
+ "answer": {
+  "description": "Patient-facing answer text.",
+  "minLength": 1,
+  "title": "Answer",
+  "type": "string"
+ },
+ "intents": {
+  "description": "What the crew handled.",
+  "items": {
+   "enum": [
+    "policy",
+    "appointment_lookup",
+    "conversation",
+    "refused"
+   ],
+   "type": "string"
+  },
+  "minItems": 1,
+  "title": "Intents",
+  "type": "array"
+ },
+ "grounded": {
+  "description": "True if every fact came from the KB or the dataset.",
+  "title": "Grounded",
+  "type": "boolean"
+ },
+ "sources": {
+  "description": "KB doc_ids quoted in the answer.",
+  "items": {
+   "type": "string"
+  },
+  "title": "Sources",
+  "type": "array"
+ },
+ "top1_similarity": {
+  "anyOf": [
+   {
+    "maximum": 1.0,
+    "minimum": -1.0,
+    "type": "number"
+   },
+   {
+    "type": "null"
+   }
+  ],
+  "default": null,
+  "title": "Top1 Similarity"
+ },
+ "appointment": {
+  "anyOf": [
+   {
+    "$ref": "#/$defs/AppointmentInfo"
+   },
+   {
+    "type": "null"
+   }
+  ],
+  "default": null
+ },
+ "tools_called": {
+  "items": {
+   "type": "string"
+  },
+  "title": "Tools Called",
+  "type": "array"
+ }
+} ...
+
+1) Real crew responses, validated in code with CrewResponse.model_validate_json():
+   VALID   'How long will my thyroid test results take?' -> intents=['policy'] grounded=True
+   VALID   'What is the status of APT-1038?' -> intents=['appointment_lookup'] grounded=True
+   VALID   'What is the capital of France?' -> intents=['policy'] grounded=False
+
+2) Malformed outputs are rejected before reaching a patient:
+   REJECTED missing answer       -> Crew output failed schema validation: 1 error(s)
+   REJECTED unknown intent       -> Crew output failed schema validation: 1 error(s)
+   REJECTED score out of range   -> Crew output failed schema validation: 1 error(s)
+   REJECTED not JSON at all      -> Crew output failed schema validation: 1 error(s)

@@ -1,0 +1,86 @@
+Document-level precision/recall, top-k=3 chunks -> parent docs (deduplicated)
+precision = |retrieved ∩ relevant| / |retrieved|    recall = |retrieved ∩ relevant| / |relevant|
+
+=== fixed ===
+Q1: How many hours before my appointment can I cancel without paying anything?
+    top-3 chunk parents: ['02_cancellation_rescheduling', '02_cancellation_rescheduling', '02_cancellation_rescheduling']
+    retrieved docs (dedup) R = ['02_cancellation_rescheduling']
+    relevant docs G = ['02_cancellation_rescheduling']
+    precision = 1/1 = 1.000   recall = 1/1 = 1.000
+Q2: How much does it cost to see a cardiologist?
+    top-3 chunk parents: ['03_consultation_fees', '03_consultation_fees', '03_consultation_fees']
+    retrieved docs (dedup) R = ['03_consultation_fees']
+    relevant docs G = ['03_consultation_fees']
+    precision = 1/1 = 1.000   recall = 1/1 = 1.000
+Q3: How long will my thyroid test results take?
+    top-3 chunk parents: ['06_lab_test_turnaround', '06_lab_test_turnaround', '06_lab_test_turnaround']
+    retrieved docs (dedup) R = ['06_lab_test_turnaround']
+    relevant docs G = ['06_lab_test_turnaround']
+    precision = 1/1 = 1.000   recall = 1/1 = 1.000
+Q4: Can I get my antibiotics refilled without seeing the doctor again?
+    top-3 chunk parents: ['05_prescription_refills', '05_prescription_refills', '05_prescription_refills']
+    retrieved docs (dedup) R = ['05_prescription_refills']
+    relevant docs G = ['05_prescription_refills']
+    precision = 1/1 = 1.000   recall = 1/1 = 1.000
+Q5: Is a follow-up visit free if I go back to the same doctor within a week?
+    top-3 chunk parents: ['10_follow_up_discount', '10_follow_up_discount', '10_follow_up_discount']
+    retrieved docs (dedup) R = ['10_follow_up_discount']
+    relevant docs G = ['10_follow_up_discount']
+    precision = 1/1 = 1.000   recall = 1/1 = 1.000
+Q6: I have chest pain, can I just book a video consultation?
+    top-3 chunk parents: ['07_telemedicine_eligibility', '07_telemedicine_eligibility', '07_telemedicine_eligibility']
+    retrieved docs (dedup) R = ['07_telemedicine_eligibility']
+    relevant docs G = ['07_telemedicine_eligibility', '08_emergency_visits']
+    precision = 1/1 = 1.000   recall = 1/2 = 0.500
+MEAN (fixed): precision = 1.000 + 1.000 + 1.000 + 1.000 + 1.000 + 1.000 / 6 = 1.000
+                 recall    = 1.000 + 1.000 + 1.000 + 1.000 + 1.000 + 0.500 / 6 = 0.917
+
+=== sentence ===
+Q1: How many hours before my appointment can I cancel without paying anything?
+    top-3 chunk parents: ['02_cancellation_rescheduling', '02_cancellation_rescheduling', '02_cancellation_rescheduling']
+    retrieved docs (dedup) R = ['02_cancellation_rescheduling']
+    relevant docs G = ['02_cancellation_rescheduling']
+    precision = 1/1 = 1.000   recall = 1/1 = 1.000
+Q2: How much does it cost to see a cardiologist?
+    top-3 chunk parents: ['03_consultation_fees', '03_consultation_fees', '03_consultation_fees']
+    retrieved docs (dedup) R = ['03_consultation_fees']
+    relevant docs G = ['03_consultation_fees']
+    precision = 1/1 = 1.000   recall = 1/1 = 1.000
+Q3: How long will my thyroid test results take?
+    top-3 chunk parents: ['06_lab_test_turnaround', '06_lab_test_turnaround', '06_lab_test_turnaround']
+    retrieved docs (dedup) R = ['06_lab_test_turnaround']
+    relevant docs G = ['06_lab_test_turnaround']
+    precision = 1/1 = 1.000   recall = 1/1 = 1.000
+Q4: Can I get my antibiotics refilled without seeing the doctor again?
+    top-3 chunk parents: ['05_prescription_refills', '05_prescription_refills', '10_follow_up_discount']
+    retrieved docs (dedup) R = ['05_prescription_refills', '10_follow_up_discount']
+    relevant docs G = ['05_prescription_refills']
+    precision = 1/2 = 0.500   recall = 1/1 = 1.000
+Q5: Is a follow-up visit free if I go back to the same doctor within a week?
+    top-3 chunk parents: ['10_follow_up_discount', '10_follow_up_discount', '10_follow_up_discount']
+    retrieved docs (dedup) R = ['10_follow_up_discount']
+    relevant docs G = ['10_follow_up_discount']
+    precision = 1/1 = 1.000   recall = 1/1 = 1.000
+Q6: I have chest pain, can I just book a video consultation?
+    top-3 chunk parents: ['07_telemedicine_eligibility', '07_telemedicine_eligibility', '07_telemedicine_eligibility']
+    retrieved docs (dedup) R = ['07_telemedicine_eligibility']
+    relevant docs G = ['07_telemedicine_eligibility', '08_emergency_visits']
+    precision = 1/1 = 1.000   recall = 1/2 = 0.500
+MEAN (sentence): precision = 1.000 + 1.000 + 1.000 + 0.500 + 1.000 + 1.000 / 6 = 0.917
+                 recall    = 1.000 + 1.000 + 1.000 + 1.000 + 1.000 + 0.500 / 6 = 0.917
+
+SUMMARY
+  fixed     mean precision=1.000  mean recall=0.917
+  sentence  mean precision=0.917  mean recall=0.917
+
+SUPPLEMENTARY: answer usability (pieces of the Task 4 answers that are complete sentences)
+  fixed     complete pieces = 8/12 = 0.667
+  sentence  complete pieces = 12/12 = 1.000
+
+RECOMMENDATION: deploy SENTENCE chunking.
+Both strategies reach the same mean recall (0.917 vs 0.917, each missing only the emergency doc on the
+chest-pain query), and fixed-size chunking wins mean precision (1.000 vs 0.917) by a single
+third-ranked off-topic chunk on Q4 that the generator never quoted. However, only 8/12 = 0.667 of the
+answer pieces built from fixed-size chunks are complete sentences versus 12/12 = 1.000 for sentence
+chunks, and a patient-facing policy answer that cuts off mid-sentence is less usable and harder to verify
+for groundedness, so the 0.083 precision gap is outweighed by a 0.333 usability gap.

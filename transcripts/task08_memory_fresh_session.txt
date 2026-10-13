@@ -1,0 +1,21 @@
+TRANSCRIPT 2 - fresh session: no state from session A
+session_id = 'patient-session-B'
+
+Turn 1 | history before this turn: 0 messages
+  Patient : What did I ask you first?
+  Resolved: What did I ask you first?
+  Memory  : remembered_record_id=None  events=['memory: answered from conversation history']
+  Tools   : []
+  Agent   : I don't have any earlier questions from you in this conversation.
+
+Turn 2 | history before this turn: 2 messages
+  Patient : Can I reschedule that appointment?
+  Resolved: Can I reschedule that appointment?
+  Memory  : remembered_record_id=None  events=['review: approved unchanged']
+  Tools   : ['rag_lookup']
+  Agent   : Each appointment may be rescheduled at most twice, after which it must be cancelled and booked again. An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slot begins. If you share your appointment ID (for example APT-1001), I can check that appointment for you.
+
+Final history length: 4 messages (HumanMessage + AIMessage per turn)
+
+Expected warning (not silenced, per brief):
+  LangChainDeprecationWarning: The class `InMemoryChatMessageHistory` was deprecated in LangChain 1.6.4 and will be removed in 2.0.0 See the 

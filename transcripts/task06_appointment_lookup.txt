@@ -1,0 +1,37 @@
+escalation_score = 0.6 * follow_up_required + 0.4 * (days_since_created / 30)      range [0, 1]
+
+days_since_created distribution in the generated dataset:
+  P20 = 5.0 days
+  P40 = 9.2 days
+  P50 = 13.5 days
+  P60 = 16.4 days
+  P80 = 23.0 days
+
+Threshold = 0.6 + 0.4 * (P40 9.2 / 30) = 0.7227 -> 0.72
+  => escalate only follow-up-required records older than the 40th percentile of record age.
+  => without a follow-up the score is capped at 0.4, so age alone never escalates.
+
+Records escalated: 5/50 = 10%
+Top 8 scores:
+  APT-1027  score=1.0000  follow_up=True  days=30  escalate=True
+  APT-1038  score=0.9867  follow_up=True  days=29  escalate=True
+  APT-1006  score=0.7733  follow_up=True  days=13  escalate=True
+  APT-1013  score=0.7733  follow_up=True  days=13  escalate=True
+  APT-1046  score=0.7467  follow_up=True  days=11  escalate=True
+  APT-1011  score=0.6933  follow_up=True  days= 7  escalate=False
+  APT-1025  score=0.6933  follow_up=True  days= 7  escalate=False
+  APT-1002  score=0.6800  follow_up=True  days= 6  escalate=False
+
+Sample lookups:
+  check_appointment_status('APT-1027') ->
+    {'kind': 'appointment_status', 'found': True, 'record_id': 'APT-1027', 'category': 'Dermatology', 'status': 'Completed', 'consultation_fee_inr': 850, 'days_since_created': 30, 'follow_up_required': True, 'escalation_score': 1.0, 'escalate': True, 'escalation_threshold': 0.72}
+  check_appointment_status('APT-1002') ->
+    {'kind': 'appointment_status', 'found': True, 'record_id': 'APT-1002', 'category': 'General Medicine', 'status': 'Completed', 'consultation_fee_inr': 550, 'days_since_created': 6, 'follow_up_required': True, 'escalation_score': 0.68, 'escalate': False, 'escalation_threshold': 0.72}
+  check_appointment_status('APT-1001') ->
+    {'kind': 'appointment_status', 'found': True, 'record_id': 'APT-1001', 'category': 'Cardiology', 'status': 'Scheduled', 'consultation_fee_inr': 900, 'days_since_created': 2, 'follow_up_required': False, 'escalation_score': 0.0267, 'escalate': False, 'escalation_threshold': 0.72}
+  check_appointment_status('apt 1010') ->
+    {'kind': 'appointment_status', 'found': True, 'record_id': 'APT-1010', 'category': 'Pediatrics', 'status': 'Completed', 'consultation_fee_inr': 850, 'days_since_created': 14, 'follow_up_required': False, 'escalation_score': 0.1867, 'escalate': False, 'escalation_threshold': 0.72}
+  check_appointment_status('APT-9999') ->
+    {'kind': 'appointment_status', 'found': False, 'record_id': 'APT-9999', 'error': 'No appointment found with ID APT-9999.'}
+  check_appointment_status('hello') ->
+    {'kind': 'appointment_status', 'found': False, 'record_id': 'hello', 'error': 'Invalid appointment ID. Expected the format APT-1001.'}

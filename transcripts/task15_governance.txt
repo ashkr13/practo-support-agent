@@ -1,0 +1,59 @@
+====================================================================================================
+APPLICATION LAYER - principle of least autonomy
+====================================================================================================
+Tool allow-list (app/crew.py TOOL_ALLOWLIST):
+  Retrieval Agent    -> ['rag_lookup']
+  Lookup Agent       -> ['check_appointment_status']
+  Response Composer  -> (no tools)
+
+Tools actually wired in the production crew:
+  Retrieval Agent    -> ['rag_lookup']
+  Lookup Agent       -> ['check_appointment_status']
+  Response Composer  -> []
+
+Attempt 1: wire check_appointment_status to the Retrieval Agent via build_agent()
+  BLOCKED: Least-autonomy violation: 'Retrieval Agent' may not use tool 'check_appointment_status' (allowed: ['rag_lookup'])
+  BLOCKED: Least-autonomy violation: 'Response Composer' may not use tool 'check_appointment_status' (allowed: none)
+
+Attempt 2: bypass build_agent() by constructing a crewai.Agent directly
+  BLOCKED before kickoff by audit_crew_tools(): Least-autonomy violation in assembled crew: 'Retrieval Agent' holds 'check_appointment_status'
+
+How the guard works:
+  Only the Lookup Agent may call check_appointment_status, because it is the only agent whose job
+  needs appointment records. Every agent is created through build_agent(), which compares each
+  requested tool's name with TOOL_ALLOWLIST[role] and raises ToolPermissionError on any tool outside
+  that list, so a mis-wiring fails loudly at start-up instead of silently giving an agent extra
+  power. Because a developer could still construct a crewai.Agent directly, run_crew() also calls
+  audit_crew_tools() on the fully assembled crew immediately before every kickoff(). In the
+  production crew the tool is simply never wired to the Retrieval Agent or the Composer; the
+  Composer has no tools at all and only reads the results it is given. If the Retrieval Agent were
+  manipulated by a prompt injection, it still could not read appointment records.
+
+====================================================================================================
+RISK CLASSIFICATION: High
+====================================================================================================
+  Under the Low/Medium/High scheme this system is HIGH risk, because it handles medical data: it
+  reads patient appointment records (specialty, status, fees, follow-up need) and patients may type
+  health conditions, symptoms or contact details into it. A wrong answer can delay care -- for
+  example telling a patient with chest pain to book a video call, or misstating a cancellation fee
+  -- and leaked data is sensitive health information under Indian data-protection law. It is not
+  merely a Medium-risk customer-support bot because the answers concern medical services and
+  records, not generic tickets. High risk is why the system adds PII masking before the model and
+  logs, injection blocking, a calibrated groundedness refusal, a deterministic red-flag emergency
+  notice, an independent second-team review of every draft, least-autonomy tool access and a hard
+  cost budget, and why it never gives diagnoses or treatment advice.
+
+====================================================================================================
+RUNTIME LAYER - per-request token budget
+====================================================================================================
+  estimate = 6000 + 12 x question_tokens (question_tokens = ceil(chars/4)); budget = 10000 tokens
+
+  Normal requests (estimate is checked against actual counted usage):
+    q_chars=  43 estimated= 6132 actual= 4219 within_estimate=True blocked=False
+    q_chars=  63 estimated= 6192 actual= 5327 within_estimate=True blocked=False
+    q_chars= 456 estimated= 7368 actual= 5712 within_estimate=True blocked=False
+
+  Deliberately oversized request (6120 chars):
+    blocked=True estimated=24360 llm_calls=0 tool_calls=0
+    events: ['budget_rejected: estimated 24360 tokens = 6000 base + 12 x 1530 question tokens; budget 10000']
+    answer: Your message is too long for me to process in one request. Please shorten it (for example to one question) and try again.

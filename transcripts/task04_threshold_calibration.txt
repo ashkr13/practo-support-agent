@@ -1,0 +1,58 @@
+
+=== Collection: fixed ===
+IN-SCOPE
+  0.7741  [02_cancellation_rescheduling]  How many hours before my appointment can I cancel without paying anything?
+  0.7169  [03_consultation_fees]  How much does it cost to see a cardiologist?
+  0.6975  [06_lab_test_turnaround]  How long will my thyroid test results take?
+  0.6741  [05_prescription_refills]  Can I get my antibiotics refilled without seeing the doctor again?
+  0.8023  [10_follow_up_discount]  Is a follow-up visit free if I go back to the same doctor within a week?
+  0.7343  [07_telemedicine_eligibility]  I have chest pain, can I just book a video consultation?
+  0.5910  [12_home_visits]  Can a doctor come to my home if I am 70 years old?
+  0.6166  [04_insurance_claims]  How do I file an insurance claim for my consultation?
+  0.6873  [09_patient_data_privacy]  Will Practo share my medical records with anyone?
+  0.7269  [11_second_opinion]  How do I get a second opinion from another specialist?
+OUT-OF-SCOPE
+  0.0985  [08_emergency_visits]  What is the capital of France?
+  0.0979  [01_appointment_booking]  Who won the cricket world cup in 2011?
+  0.0925  [12_home_visits]  How do I bake sourdough bread at home?
+  0.0656  [07_telemedicine_eligibility]  Can you recommend a good laptop for programming?
+  0.1617  [12_home_visits]  What will the weather be like in Mumbai tomorrow?
+in-scope cluster:     min=0.5910 max=0.8023
+out-of-scope cluster: min=0.0656 max=0.1617
+gap = 0.4293; midpoint threshold = 0.3763
+CHOSEN threshold (app/config.py) = 0.38
+NEAR-DOMAIN OUT-OF-SCOPE stress test (not used for calibration)
+  0.2208  [04_insurance_claims]  Do you offer dental implants?  -> blocked
+  0.6616  [12_home_visits]  What are the visiting hours for admitted patients?  -> passes gate (needs groundedness check)
+  0.5036  [11_second_opinion]  Can I pay my consultation fee with cryptocurrency?  -> passes gate (needs groundedness check)
+  0.5482  [12_home_visits]  What is the parking fee at the clinic?  -> passes gate (needs groundedness check)
+  0.2110  [06_lab_test_turnaround]  Which vaccines does my baby need at 6 months?  -> blocked
+
+=== Collection: sentence ===
+IN-SCOPE
+  0.7867  [02_cancellation_rescheduling]  How many hours before my appointment can I cancel without paying anything?
+  0.6404  [03_consultation_fees]  How much does it cost to see a cardiologist?
+  0.7107  [06_lab_test_turnaround]  How long will my thyroid test results take?
+  0.6000  [05_prescription_refills]  Can I get my antibiotics refilled without seeing the doctor again?
+  0.7995  [10_follow_up_discount]  Is a follow-up visit free if I go back to the same doctor within a week?
+  0.6752  [07_telemedicine_eligibility]  I have chest pain, can I just book a video consultation?
+  0.5857  [12_home_visits]  Can a doctor come to my home if I am 70 years old?
+  0.5885  [04_insurance_claims]  How do I file an insurance claim for my consultation?
+  0.5865  [09_patient_data_privacy]  Will Practo share my medical records with anyone?
+  0.6869  [11_second_opinion]  How do I get a second opinion from another specialist?
+OUT-OF-SCOPE
+  0.0310  [03_consultation_fees]  What is the capital of France?
+  0.0809  [10_follow_up_discount]  Who won the cricket world cup in 2011?
+  0.1090  [12_home_visits]  How do I bake sourdough bread at home?
+  0.1291  [07_telemedicine_eligibility]  Can you recommend a good laptop for programming?
+  0.1587  [12_home_visits]  What will the weather be like in Mumbai tomorrow?
+in-scope cluster:     min=0.5857 max=0.7995
+out-of-scope cluster: min=0.0310 max=0.1587
+gap = 0.4270; midpoint threshold = 0.3722
+CHOSEN threshold (app/config.py) = 0.37
+NEAR-DOMAIN OUT-OF-SCOPE stress test (not used for calibration)
+  0.2128  [12_home_visits]  Do you offer dental implants?  -> blocked
+  0.5217  [12_home_visits]  What are the visiting hours for admitted patients?  -> passes gate (needs groundedness check)
+  0.5013  [03_consultation_fees]  Can I pay my consultation fee with cryptocurrency?  -> passes gate (needs groundedness check)
+  0.6561  [03_consultation_fees]  What is the parking fee at the clinic?  -> passes gate (needs groundedness check)
+  0.1629  [01_appointment_booking]  Which vaccines does my baby need at 6 months?  -> blocked

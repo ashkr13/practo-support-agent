@@ -1,0 +1,27 @@
+# Practo Domain Support Agent - pinned dependencies
+# Tested on: native arm64 CPython 3.12.15, macOS (Apple M4).
+# NOTE: crewai 1.15.x requires Python >=3.10,<3.14. Use Python 3.12 or 3.13.
+
+# --- Agent orchestration ---
+crewai==1.15.27
+autogen-agentchat==0.7.5
+autogen-core==0.7.5
+
+# --- Memory ---
+langchain-core==1.6.9
+
+# --- RAG: local embeddings + vector store ---
+sentence-transformers==6.1.0
+chromadb==1.5.9
+numpy==2.5.4
+
+# --- API ---
+fastapi==0.143.0
+uvicorn[standard]==0.54.0
+pydantic==2.12.5
+python-dotenv==1.2.4
+websockets==17.2
+
+# --- Testing ---
+pytest==9.1.1
+httpx==0.28.1

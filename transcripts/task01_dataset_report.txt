@@ -1,0 +1,27 @@
+Practo appointment dataset  (seed=7, n=50)
+
+Count per category:
+  General Medicine    13
+  Cardiology           9
+  Dermatology         12
+  Pediatrics          10
+  Orthopedics          6
+
+Count per status:
+  Scheduled           14
+  Completed           22
+  Cancelled            3
+  No-Show              2
+  Rescheduled          9
+
+follow_up_required=True: 12/50 = 24.0%
+consultation_fee_inr: min=400 max=1800
+
+VALIDATION: PASS
+
+First 5 records:
+  {'record_id': 'APT-1001', 'category': 'Cardiology', 'status': 'Scheduled', 'consultation_fee_inr': 900, 'days_since_created': 2, 'follow_up_required': False}
+  {'record_id': 'APT-1002', 'category': 'General Medicine', 'status': 'Completed', 'consultation_fee_inr': 550, 'days_since_created': 6, 'follow_up_required': True}
+  {'record_id': 'APT-1003', 'category': 'Cardiology', 'status': 'Scheduled', 'consultation_fee_inr': 1000, 'days_since_created': 17, 'follow_up_required': False}
+  {'record_id': 'APT-1004', 'category': 'Pediatrics', 'status': 'Scheduled', 'consultation_fee_inr': 500, 'days_since_created': 20, 'follow_up_required': False}
+  {'record_id': 'APT-1005', 'category': 'Orthopedics', 'status': 'Completed', 'consultation_fee_inr': 1000, 'days_since_created': 1, 'follow_up_required': False}

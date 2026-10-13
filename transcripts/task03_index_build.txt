@@ -1,0 +1,8 @@
+[fixed] collection='kb_fixed_overlap' chunks=45
+   e.g. 01_appointment_booking::fixed::0: 'Patients can book an in-clinic appointment through the Practo app, the website, or by calling the clinic front desk. Bookings open up to 30 days in advance and close 2'
+[sentence] collection='kb_sentence' chunks=48
+   e.g. 01_appointment_booking::sentence::0: 'Patients can book an in-clinic appointment through the Practo app, the website, or by calling the clinic front desk.'
+
+Sanity retrieval for: 'How late can I cancel my appointment?'
+   [fixed] top-1 sim=0.7025 doc=02_cancellation_rescheduling :: An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slo...
+   [sentence] top-1 sim=0.7310 doc=02_cancellation_rescheduling :: An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slo...

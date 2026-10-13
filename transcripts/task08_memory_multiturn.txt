@@ -1,0 +1,35 @@
+TRANSCRIPT 1 - multi-turn session: state carried across turns
+session_id = 'patient-session-A'
+
+Turn 1 | history before this turn: 0 messages
+  Patient : What is the status of APT-1003?
+  Resolved: What is the status of APT-1003?
+  Memory  : remembered_record_id=None  events=['review: approved unchanged']
+  Tools   : ['check_appointment_status']
+  Agent   : Appointment APT-1003 (Cardiology) is currently Scheduled, with a consultation fee of Rs 1000.
+
+Turn 2 | history before this turn: 2 messages
+  Patient : Can I reschedule that appointment?
+  Resolved: Can I reschedule that appointment? (appointment APT-1003)
+  Memory  : remembered_record_id=APT-1003  events=['memory: resolved reference to APT-1003', 'review: approved unchanged']
+  Tools   : ['check_appointment_status', 'rag_lookup']
+  Agent   : Appointment APT-1003 (Cardiology) is currently Scheduled, with a consultation fee of Rs 1000. Each appointment may be rescheduled at most twice, after which it must be cancelled and booked again. An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slot begins.
+
+Turn 3 | history before this turn: 4 messages
+  Patient : What is its fee?
+  Resolved: What is its fee? (appointment APT-1003)
+  Memory  : remembered_record_id=APT-1003  events=['memory: resolved reference to APT-1003', 'groundedness_refusal: retrieved context does not answer the question (cross-encoder answerability -4.02 < -1.04)', 'review: approved unchanged']
+  Tools   : ['check_appointment_status', 'rag_lookup']
+  Agent   : Appointment APT-1003 (Cardiology) is currently Scheduled, with a consultation fee of Rs 1000. I couldn't find a clinic policy that answers the rest of your question.
+
+Turn 4 | history before this turn: 6 messages
+  Patient : What did I ask you first?
+  Resolved: What did I ask you first?
+  Memory  : remembered_record_id=None  events=['memory: answered from conversation history']
+  Tools   : []
+  Agent   : Your first question in this conversation was: "What is the status of APT-1003?"
+
+Final history length: 8 messages (HumanMessage + AIMessage per turn)
+
+Expected warning (not silenced, per brief):
+  LangChainDeprecationWarning: The class `InMemoryChatMessageHistory` was deprecated in LangChain 1.6.4 and will be removed in 2.0.0 See the 

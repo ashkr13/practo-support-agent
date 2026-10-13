@@ -1,0 +1,87 @@
+MOCK_LLM=true | generator = deterministic extractive (answers only from retrieved context)
+
+============================== collection: fixed ==============================
+
+Q1: How many hours before my appointment can I cancel without paying anything?
+  top-1 similarity=0.7741 threshold=0.38 -> GROUNDED
+  retrieved: ['02_cancellation_rescheduling (0.774)', '02_cancellation_rescheduling (0.669)', '02_cancellation_rescheduling (0.581)']
+  A: An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slot begins. less than 4 hours before the slot forfeit 50 percent of the consultation fee.
+  sources: ['02_cancellation_rescheduling']
+
+Q2: How much does it cost to see a cardiologist?
+  top-1 similarity=0.7169 threshold=0.38 -> GROUNDED
+  retrieved: ['03_consultation_fees (0.717)', '03_consultation_fees (0.625)', '03_consultation_fees (0.533)']
+  A: Orthopedics consultations cost between 600 and 1,500 rupees, while Cardiology consultations cost between 800 and 2,000... Consultation fees depend on the specialty and the seniority of the doctor.
+  sources: ['03_consultation_fees']
+
+Q3: How long will my thyroid test results take?
+  top-1 similarity=0.6975 threshold=0.38 -> GROUNDED
+  retrieved: ['06_lab_test_turnaround (0.698)', '06_lab_test_turnaround (0.577)', '06_lab_test_turnaround (0.323)']
+  A: tests such as thyroid panels and vitamin levels take 48 to 72 hours, while culture and biopsy reports can take up to 7 days. Routine blood tests such as a complete blood count or lipid profile report within 24 hours of sample collection.
+  sources: ['06_lab_test_turnaround']
+
+Q4: Can I get my antibiotics refilled without seeing the doctor again?
+  top-1 similarity=0.6741 threshold=0.38 -> GROUNDED
+  retrieved: ['05_prescription_refills (0.674)', '05_prescription_refills (0.547)', '05_prescription_refills (0.449)']
+  A: A prescription refill can be requested through the app for ongoing medicines that the same doctor prescribed within the last 90 days. Refills are never issued for controlled substances or antibiotics without a fresh consultation.
+  sources: ['05_prescription_refills']
+
+Q5: Is a follow-up visit free if I go back to the same doctor within a week?
+  top-1 similarity=0.8023 threshold=0.38 -> GROUNDED
+  retrieved: ['10_follow_up_discount (0.802)', '10_follow_up_discount (0.572)', '10_follow_up_discount (0.566)']
+  A: A follow-up visit with the same doctor for the same condition within 7 days of the original consultation is free of charge. A follow-up booked between 8 and 14 days after the original consultation receives a 50 percent discount on the consultation fee.
+  sources: ['10_follow_up_discount']
+
+Q6: I have chest pain, can I just book a video consultation?
+  top-1 similarity=0.7343 threshold=0.38 -> GROUNDED
+  retrieved: ['07_telemedicine_eligibility (0.734)', '07_telemedicine_eligibility (0.555)', '07_telemedicine_eligibility (0.501)']
+  A: A doctor may end a video consultation and ask the patient to visit in person if a... Video consultations are available for follow-ups, skin conditions, minor infections, medication reviews, and discussion of existing lab reports.
+  sources: ['07_telemedicine_eligibility']
+
+Q7: What is the capital of France?
+  top-1 similarity=0.0985 threshold=0.38 -> FALLBACK
+  retrieved: ['08_emergency_visits (0.099)', '01_appointment_booking (0.047)', '08_emergency_visits (0.040)']
+  A: I don't know. I couldn't find this in Practo's clinic policy documents. Please contact the clinic front desk for help.
+
+============================== collection: sentence ==============================
+
+Q1: How many hours before my appointment can I cancel without paying anything?
+  top-1 similarity=0.7867 threshold=0.37 -> GROUNDED
+  retrieved: ['02_cancellation_rescheduling (0.787)', '02_cancellation_rescheduling (0.680)', '02_cancellation_rescheduling (0.537)']
+  A: An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slot begins. Cancellations made less than 4 hours before the slot forfeit 50 percent of the consultation fee.
+  sources: ['02_cancellation_rescheduling']
+
+Q2: How much does it cost to see a cardiologist?
+  top-1 similarity=0.6404 threshold=0.37 -> GROUNDED
+  retrieved: ['03_consultation_fees (0.640)', '03_consultation_fees (0.575)', '03_consultation_fees (0.530)']
+  A: Orthopedics consultations cost between 600 and 1,500 rupees, while Cardiology consultations cost between 800 and 2,000 rupees. Consultation fees depend on the specialty and the seniority of the doctor.
+  sources: ['03_consultation_fees']
+
+Q3: How long will my thyroid test results take?
+  top-1 similarity=0.7107 threshold=0.37 -> GROUNDED
+  retrieved: ['06_lab_test_turnaround (0.711)', '06_lab_test_turnaround (0.371)', '06_lab_test_turnaround (0.244)']
+  A: Specialised tests such as thyroid panels and vitamin levels take 48 to 72 hours, while culture and biopsy reports can take up to 7 days. Routine blood tests such as a complete blood count or lipid profile report within 24 hours of sample collection.
+  sources: ['06_lab_test_turnaround']
+
+Q4: Can I get my antibiotics refilled without seeing the doctor again?
+  top-1 similarity=0.6000 threshold=0.37 -> GROUNDED
+  retrieved: ['05_prescription_refills (0.600)', '05_prescription_refills (0.516)', '10_follow_up_discount (0.492)']
+  A: A prescription refill can be requested through the app for ongoing medicines that the same doctor prescribed within the last 90 days. Refills are never issued for controlled substances or antibiotics without a fresh consultation.
+  sources: ['05_prescription_refills']
+
+Q5: Is a follow-up visit free if I go back to the same doctor within a week?
+  top-1 similarity=0.7995 threshold=0.37 -> GROUNDED
+  retrieved: ['10_follow_up_discount (0.799)', '10_follow_up_discount (0.550)', '10_follow_up_discount (0.483)']
+  A: A follow-up visit with the same doctor for the same condition within 7 days of the original consultation is free of charge. A follow-up booked between 8 and 14 days after the original consultation receives a 50 percent discount on the consultation fee.
+  sources: ['10_follow_up_discount']
+
+Q6: I have chest pain, can I just book a video consultation?
+  top-1 similarity=0.6752 threshold=0.37 -> GROUNDED
+  retrieved: ['07_telemedicine_eligibility (0.675)', '07_telemedicine_eligibility (0.647)', '07_telemedicine_eligibility (0.477)']
+  A: A doctor may end a video consultation and ask the patient to visit in person if a physical examination is required. Video consultations are available for follow-ups, skin conditions, minor infections, medication reviews, and discussion of existing lab reports.
+  sources: ['07_telemedicine_eligibility']
+
+Q7: What is the capital of France?
+  top-1 similarity=0.0310 threshold=0.37 -> FALLBACK
+  retrieved: ['03_consultation_fees (0.031)', '09_patient_data_privacy (0.030)', '01_appointment_booking (0.021)']
+  A: I don't know. I couldn't find this in Practo's clinic policy documents. Please contact the clinic front desk for help.

@@ -1,0 +1,63 @@
+
+==========================================================================================
+CASE 1 - grounded draft (expected: APPROVED unchanged)
+Question: How long will my thyroid test results take?
+Draft from CrewAI Composer:
+  Specialised tests such as thyroid panels and vitamin levels take 48 to 72 hours, while culture and biopsy reports can take up to 7 days. Routine blood tests such as a complete blood count or lipid profile report within 24 hours of sample collection.
+Group chat (RoundRobinGroupChat, max_turns=2):
+  [user | TextMessage] REVIEW TASK
+    Question: How long will my thyroid test results take?
+    DRAFT ANSWER:
+    <<<Specialised tests such as thyroid panels and vitamin levels take 48 to 72 hours, while culture and biopsy reports can take up to 7 days. Routine blood tests such as a complete blood count or lipid profile report within 24 hours of sample collection.>>>
+    RETRIEVED CONTEXT:
+    [06_lab_test_turnaround] Specialised tests such as thyroid panels and vitamin levels take 48 to 72 hours, while culture and biopsy reports can take up to 7 days.
+    [06_lab_test_turnaround] Routine blood tests such as a complete blood count or lipid profile report within 24 hours of sample collection.
+    [06_lab_test_turnaround] If a report is delayed beyond the stated time, patients can raise a ticket from the lab order page.
+  [Policy_Compliance_Reviewer | TextMessage] COMPLIANCE_FINDINGS: {"checked": 2, "unsupported": []}
+  [Final_Editor | StructuredMessage[ReviewVerdict]] {"approved":true,"final_answer":"Specialised tests such as thyroid panels and vitamin levels take 48 to 72 hours, while culture and biopsy reports can take up to 7 days. Routine blood tests such as a complete blood count or lipid profile report within 24 hours of sample collection.","reason":"All 2 sentence(s) are supported by the retrieved context; approved unchanged."}
+ReviewVerdict -> approved=True
+  final_answer: Specialised tests such as thyroid panels and vitamin levels take 48 to 72 hours, while culture and biopsy reports can take up to 7 days. Routine blood tests such as a complete blood count or lipid profile report within 24 hours of sample collection.
+  reason: All 2 sentence(s) are supported by the retrieved context; approved unchanged.
+  draft unchanged: True   review LLM calls: 2
+
+==========================================================================================
+CASE 2 - draft with a deliberately INJECTED ungrounded claim (expected: REVISED)
+Question: How many hours before my appointment can I cancel without paying anything?
+Draft from CrewAI Composer:
+  An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slot begins. Cancellations made less than 4 hours before the slot forfeit 50 percent of the consultation fee. Patients marked as No-Show also receive a full refund within 1 hour.
+Group chat (RoundRobinGroupChat, max_turns=2):
+  [user | TextMessage] REVIEW TASK
+    Question: How many hours before my appointment can I cancel without paying anything?
+    DRAFT ANSWER:
+    <<<An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slot begins. Cancellations made less than 4 hours before the slot forfeit 50 percent of the consultation fee. Patients marked as No-Show also receive a full refund within 1 hour.>>>
+    RETRIEVED CONTEXT:
+    [02_cancellation_rescheduling] An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slot begins.
+    [02_cancellation_rescheduling] Cancellations made less than 4 hours before the slot forfeit 50 percent of the consultation fee.
+    [02_cancellation_rescheduling] Each appointment may be rescheduled at most twice, after which it must be cancelled and booked again.
+  [Policy_Compliance_Reviewer | TextMessage] COMPLIANCE_FINDINGS: {"checked": 3, "unsupported": ["Patients marked as No-Show also receive a full refund within 1 hour."]}
+  [Final_Editor | StructuredMessage[ReviewVerdict]] {"approved":false,"final_answer":"An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slot begins. Cancellations made less than 4 hours before the slot forfeit 50 percent of the consultation fee.","reason":"Removed 1 unsupported claim(s) not found in the retrieved context: ['Patients marked as No-Show also receive a full refund within 1 hour.']"}
+ReviewVerdict -> approved=False
+  final_answer: An appointment can be cancelled or rescheduled free of charge up to 4 hours before the slot begins. Cancellations made less than 4 hours before the slot forfeit 50 percent of the consultation fee.
+  reason: Removed 1 unsupported claim(s) not found in the retrieved context: ['Patients marked as No-Show also receive a full refund within 1 hour.']
+  draft unchanged: False   review LLM calls: 2
+
+==========================================================================================
+CASE 3 - draft with a deliberately ALTERED number, 7 -> 30 days (expected: REVISED)
+Question: Is a follow-up visit free if I go back to the same doctor within a week?
+Draft from CrewAI Composer:
+  A follow-up visit with the same doctor for the same condition within 30 days of the original consultation is free of charge. A follow-up booked between 8 and 14 days after the original consultation receives a 50 percent discount on the consultation fee.
+Group chat (RoundRobinGroupChat, max_turns=2):
+  [user | TextMessage] REVIEW TASK
+    Question: Is a follow-up visit free if I go back to the same doctor within a week?
+    DRAFT ANSWER:
+    <<<A follow-up visit with the same doctor for the same condition within 30 days of the original consultation is free of charge. A follow-up booked between 8 and 14 days after the original consultation receives a 50 percent discount on the consultation fee.>>>
+    RETRIEVED CONTEXT:
+    [10_follow_up_discount] A follow-up visit with the same doctor for the same condition within 7 days of the original consultation is free of charge.
+    [10_follow_up_discount] A follow-up booked between 8 and 14 days after the original consultation receives a 50 percent discount on the consultation fee.
+    [10_follow_up_discount] Follow-ups booked after 14 days are charged at the full fee.
+  [Policy_Compliance_Reviewer | TextMessage] COMPLIANCE_FINDINGS: {"checked": 2, "unsupported": ["A follow-up visit with the same doctor for the same condition within 30 days of the original consultation is free of charge."]}
+  [Final_Editor | StructuredMessage[ReviewVerdict]] {"approved":false,"final_answer":"A follow-up booked between 8 and 14 days after the original consultation receives a 50 percent discount on the consultation fee.","reason":"Removed 1 unsupported claim(s) not found in the retrieved context: ['A follow-up visit with the same doctor for the same condition within 30 days of the original consultation is free of charge.']"}
+ReviewVerdict -> approved=False
+  final_answer: A follow-up booked between 8 and 14 days after the original consultation receives a 50 percent discount on the consultation fee.
+  reason: Removed 1 unsupported claim(s) not found in the retrieved context: ['A follow-up visit with the same doctor for the same condition within 30 days of the original consultation is free of charge.']
+  draft unchanged: False   review LLM calls: 2

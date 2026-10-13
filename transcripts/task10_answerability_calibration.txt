@@ -1,0 +1,42 @@
+Model: cross-encoder/ms-marco-MiniLM-L-6-v2; score = max over top-3 retrieved sentence chunks
+
+IN-SCOPE
+    -4.998  [red flag: excluded] My mother suddenly has difficulty breathing. What should we do?
+    -1.670  [red flag: excluded] I have chest pain, can I just book a video consultation?
+    -0.606  Is there any extra charge if the doctor visits me at home?
+    -0.585  Can I ask Practo to delete my health records?
+     1.334  Can I reschedule APT-1003, and what is the cancellation window?
+     1.946  Can a doctor come to my home if I am 70 years old?
+     2.529  Can I get my antibiotics refilled without seeing the doctor again?
+     2.551  How do I file an insurance claim for my consultation?
+     2.899  How far ahead can I book a clinic appointment, and when do bookings close?
+     2.969  When will my complete blood count report be ready?
+     3.551  Can I get a refill for a medicine my doctor prescribed four months ago?
+     4.122  If I cancel just one hour before my slot, will I lose any money?
+     5.114  How much does it cost to see a cardiologist?
+     5.477  How many hours before my appointment can I cancel without paying anything?
+     5.602  Will Practo share my medical records with anyone?
+     6.055  How long will my thyroid test results take?
+     6.378  What do I need to join an online video consultation?
+     6.524  My appointment APT-1002 needs a follow-up. Is the follow-up visit discounted?
+     7.683  What does a dermatology consultation cost?
+     8.194  Is a follow-up visit free if I go back to the same doctor within a week?
+     8.231  How long does a second opinion review take and what does it cost?
+     8.718  How do I get a second opinion from another specialist?
+     9.090  Does Practo decide whether my insurance claim gets approved?
+NEAR/OUT-OF-DOMAIN
+   -11.262  Do you offer dental implants?
+   -11.221  What will the weather be like in Mumbai tomorrow?
+   -11.215  What is the capital of France?
+   -11.203  Which vaccines does my baby need at 6 months?
+   -11.194  Can you recommend a good laptop for programming?
+   -11.145  How do I bake sourdough bread at home?
+   -11.141  Which stocks should I invest in this year?
+   -11.121  Who won the cricket world cup in 2011?
+   -10.600  Do you offer physiotherapy sessions?
+    -6.724  Can I pay my consultation fee with cryptocurrency?
+    -2.815  What are the visiting hours for admitted patients?
+    -1.481  What is the parking fee at the clinic?
+
+in-scope min (excl. red flags) = -0.606   near/out-of-domain max = -1.481   gap = 0.875
+midpoint = -1.044  ->  ANSWERABILITY_THRESHOLD = -1.04
