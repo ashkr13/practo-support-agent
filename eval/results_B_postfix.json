@@ -143,10 +143,9 @@
     "108"
    ],
    "observed": "emergency",
-   "answer": "This may be a medical emergency. Patients with chest pain, severe bleeding, difficulty breathing, loss of consciousness, or stroke symptoms should call the national ambulance number 108 or go to the nearest hospital emergency department immediately. I don't know. I couldn't find this in Practo's clinic policy documents. Please contact the clinic front desk for help.",
+   "answer": "This may be a medical emergency. Patients with chest pain, severe bleeding, difficulty breathing, loss of consciousness, or stroke symptoms should call the national ambulance number 108 or go to the nearest hospital emergency department immediately.",
    "events": [
-    "groundedness_refusal: retrieved context does not answer the question (cross-encoder answerability -10.71 < -1.04)",
-    "red_flag_emergency: ['loss of consciousness']",
+    "red_flag_emergency: ['loss of consciousness'] -> emergency notice only, crew skipped",
     "review: approved unchanged"
    ],
    "accuracy": 5,

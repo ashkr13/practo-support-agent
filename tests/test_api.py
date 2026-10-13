@@ -152,3 +152,13 @@ def test_phone_number_never_reaches_disk(client, log_file):
     text = log_file.read_text()
     assert PHONE not in text and f"{PHONE[:5]} {PHONE[5:]}" not in text
     assert "[PHONE_REDACTED]" in text
+
+
+def test_ui_page_served_and_self_contained(client):
+    r = client.get("/")
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
+    assert "Practo Support Agent" in r.text and "/ws/chat" in r.text
+    # Works offline: no scripts, styles, images or fonts loaded from the internet.
+    import re
+    assert not re.search(r"""(src|href)\s*=\s*["']https?://""", r.text)
+    assert "@import" not in r.text and "url(http" not in r.text

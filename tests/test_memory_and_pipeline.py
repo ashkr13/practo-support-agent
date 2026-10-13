@@ -66,9 +66,20 @@ def test_red_flag_puts_emergency_notice_first(session):
     r = ask("I have chest pain, can I just book a video consultation?", session)
     assert r.response.answer.startswith("This may be a medical emergency.")
     assert "108" in r.response.answer and r.response.sources[0] == "08_emergency_visits"
-    # v2 groundedness: the retrieved video-consultation text does not answer a chest-pain question,
-    # so no telemedicine advice follows the emergency notice.
+    # Emergency answers are deterministic: notice only, no other advice, crew not run.
     assert "Video consultations are available" not in r.response.answer
+    assert r.response.tools_called == []
+
+
+@pytest.mark.parametrize("q", ["I have chest pain, can I book a video consultation?",
+                               "I have chest pain, can I just book a video consultation?",
+                               "My father fainted, what is the status of APT-1003?"])
+def test_red_flag_answer_is_emergency_only_regardless_of_wording(session, q):
+    reset_session(session)
+    r = ask(q, session)
+    assert r.response.answer.startswith("This may be a medical emergency.")
+    assert r.response.answer.endswith("emergency department immediately.")
+    assert r.review.approved
 
 
 @pytest.mark.parametrize("raw", [

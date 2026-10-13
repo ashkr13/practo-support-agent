@@ -6,14 +6,18 @@ Preparation (once): follow README §7 Setup, then run the tests.
 ```bash
 .venv/bin/python -m pytest -q
 ```
-Expected: `122 passed` (2 LangChain deprecation warnings are expected).
+Expected: `126 passed` (2 LangChain deprecation warnings are expected).
+
+**Easiest demo — the UI:** start `.venv/bin/uvicorn app.api:app --port 8000`, open http://localhost:8000, click the
+example questions in order, and point at the "Under the hood" panel after each one. The table below is the
+terminal-based alternative.
 
 | Step | Run | What to point out |
 |---|---|---|
 | 1. Data | `.venv/bin/python dataset.py` | Seed 7 → same 50 records every time; every threshold PASS; 24 % follow-up |
 | 2. Calibration | `.venv/bin/python scripts/task04_calibrate_threshold.py` | Two clusters (in-scope ≥0.586, out-of-scope ≤0.162) → threshold in the gap; near-domain questions overlap → why a second check exists |
 | 3. Crew | `.venv/bin/python scripts/task07_crew_demo.py` | ReAct trace: Action → real tool execution → Final Answer; Q3 uses BOTH tools |
-| 4. Guardrails | `.venv/bin/python scripts/task10_guardrails_demo.py` | Phone masked before model; injection blocked; parking refused despite 0.656 similarity; chest pain → 108 first |
+| 4. Guardrails | `.venv/bin/python scripts/task10_guardrails_demo.py` | Phone masked before model; injection blocked; parking refused despite 0.656 similarity; chest pain → only "call 108" |
 | 5. Review | `.venv/bin/python scripts/task14_review_demo.py` | Approve unchanged vs injected refund claim removed vs "7 → 30 days" caught |
 | 6. Governance | `.venv/bin/python scripts/task15_governance_demo.py` | Tool-wiring blocked twice; High risk; oversized request rejected with 0 model calls |
 | 7. API live | `.venv/bin/python scripts/task11_live_api_demo.py` | Real uvicorn; WebSocket client drops mid-answer → server keeps serving; log has `[PHONE_REDACTED]` |
@@ -82,7 +86,7 @@ injection it still could not read appointment records.
 
 **12. Why is the system High risk?**
 It processes medical data — appointment records, symptoms, contact details — and wrong answers can delay care. That
-is why it has masking, injection blocking, groundedness refusal, emergency triage, independent review, least
+is why it has masking, injection blocking, groundedness refusal, emergency triage (emergency-only answer), independent review, least
 autonomy and a budget cap, and never gives diagnosis or treatment advice.
 
 **13. How did you set the token budget?**
@@ -121,3 +125,9 @@ list is process-wide. Correct, but it limits throughput — documented.
 | Model load error offline | models not cached | `.venv/bin/python scripts/download_models.py` once |
 | "unauthenticated requests to the HF Hub" | a script imported a model library before `app` | import any `app.*` module first |
 | `ValueError: Message type ... not registered` | review team built without `custom_message_types` | use `build_review_team()` |
+
+**19. Why does a chest-pain question get ONLY the emergency notice?**
+Found while testing the UI: "can I **book** a video consultation?" with chest pain passed the answerability check
+(the wording "can I **just** book" did not) and video-consultation advice followed the 108 notice. A life-safety
+answer must not depend on a borderline score, so red flags are now handled first and deterministically: the answer
+is only the KB emergency sentence and the crew is not run. Three wordings are regression-tested.

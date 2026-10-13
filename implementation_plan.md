@@ -2,7 +2,7 @@
 
 Legend: ✅ done · 🔄 in progress · ⏳ pending
 
-**Status (2026-10-13): all milestones complete. 122 tests pass (also in a fresh venv from requirements.txt). Pending: publish to GitHub (user).**
+**Status (2026-10-13): all milestones complete. 126 tests pass (also in a fresh venv from requirements.txt). Published: https://github.com/ashkr13/practo-support-agent**
 
 | M | Milestone | Tasks | Completion criteria | Status |
 |---|---|---|---|---|
@@ -55,9 +55,10 @@ M1 → M2 → M3 (chooses collection) → M4 → M5 → M6 → M7 → M8.
 | 2026-10-13 | Partial-policy fallback wording when a lookup answered but the policy part was refused | Avoids "Rs 1000. I don't know." contradiction in multi-turn answers |
 | 2026-10-13 | Judge fix: approved refusal templates recognised in Grounding | E15 (correct block) scored Grounding 1; disclosed in transcript |
 | 2026-10-13 | `requirements.txt`: added numpy, websockets (imported directly); removed unused autogen-ext | Verified by fresh-venv install + full test run |
+| 2026-10-13 | Added chat UI (`GET /`, `app/static/index.html`) | User request; demo aid; no new dependencies, offline |
+| 2026-10-13 | Red-flag triage moved before the crew; emergency answers are notice-only | Found in UI testing: one wording passed answerability and appended telemedicine advice after the 108 notice |
 
 ## Pending / future work
-* Publish the repository to GitHub (user action).
 * Real LLM behind `MOCK_LLM=false`; independent LLM judge; larger evaluation sets.
 * Sentence-window or hybrid retrieval; cross-encoder re-ranking for sentence selection.
 * Per-request tool-call context (remove the crew lock); persistent memory.

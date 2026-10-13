@@ -6,3 +6,6 @@ __pycache__/
 chroma_db/
 logs/
 .DS_Store
+
+# Personal study notes (kept local, not published)
+LEARNING_GUIDE.md

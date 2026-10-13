@@ -11,11 +11,13 @@ reviewed by an independent Autogen team, and runs under explicit governance — 
 evaluated end to end.
 
 ```
-request ─► budget cap ─► mask phone numbers ─► injection check ─► session memory
+request ─► mask phone numbers ─► budget cap ─► injection check ─► red-flag triage ─► session memory
         ─► CrewAI crew [Retrieval Agent · Lookup Agent · Response Composer]
-        ─► groundedness check ─► red-flag emergency notice ─► Autogen review [Reviewer → Final Editor]
+        ─► groundedness check ─► Autogen review [Reviewer → Final Editor]
         ─► validated Pydantic response   (+ one JSON-Lines log line, PII masked)
 ```
+
+Try the chat UI at http://localhost:8000 (§8).
 
 Detailed docs: [requirements.md](requirements.md) · [architecture.md](architecture.md) ·
 [implementation_plan.md](implementation_plan.md) · [EVIDENCE_CHECKLIST.md](EVIDENCE_CHECKLIST.md) ·
@@ -114,8 +116,9 @@ harder to verify, so the 0.083 precision gap is outweighed by the 0.333 usabilit
 * **Guardrails** (Task 10, [transcript](transcripts/task10_guardrails.txt)):
   * input: **phone-number masking** (Indian mobile: optional `+91`/`91`/`0`, 10 digits starting 6–9, optional
     space/hyphen → `[PHONE_REDACTED]`); **prompt-injection detection** (5 pattern families, request blocked and
-    *not* stored in memory); **red-flag emergency notice** (chest pain, breathing difficulty, severe bleeding,
-    unconsciousness, stroke → KB emergency sentence first);
+    *not* stored in memory); **red-flag emergency triage** (chest pain, breathing difficulty, severe bleeding,
+    unconsciousness, stroke → the answer is *only* the KB emergency sentence, "call 108"; the crew is not run, so
+    the response never depends on a borderline retrieval score);
   * output: **groundedness check** = (1) similarity ≥ calibrated threshold AND (2) **cross-encoder answerability**
     (`cross-encoder/ms-marco-MiniLM-L-6-v2`, max score over retrieved passages ≥ **−1.04**, calibrated on
     already-seen questions: in-scope min −0.606 vs near/out-of-domain max −1.481,
@@ -127,6 +130,7 @@ harder to verify, so the 0.083 precision gap is outweighed by the 0.333 usabilit
 ### API (Task 11)
 | Endpoint | Purpose |
 |---|---|
+| `GET /` | **chat UI** (single offline HTML page: chat + "Under the hood" panel) |
 | `GET /health` | status + index sizes |
 | `POST /ask` | `AskRequest{question, session_id}` → `AskResponse` (answer, intents, sources, appointment, guardrail events, review verdict, tokens, cache hit, trace_id) |
 | `POST /add-document` | `AddDocumentRequest{doc_id, title, text(2–5 sentences)}` → 201; rejects injection text; optional `X-Admin-Key` |
@@ -199,7 +203,7 @@ independent of the review stage; a real LLM judge would be.
     measured usage: a full turn used 4,219–5,712 tokens). A 6,120-char request (24,360 est.) is **rejected with 0
     model calls and 0 tool calls**.
 * **Cache** (Task 16): in-memory, keyed by normalised query text, in front of retrieval + generation; repeat query
-  → 0 retrieval calls, 0 generation calls, ~0.008 ms vs ~170–260 ms; cleared whenever the KB changes
+  → 0 retrieval calls, 0 generation calls, ~0.01 ms vs ~170–260 ms; cleared whenever the KB changes
   ([transcript](transcripts/task16_cache.txt)).
 
 ---
@@ -246,7 +250,7 @@ No API keys or secrets are needed. `.env` is git-ignored.
 
 ## 8. Run
 
-Tests (122):
+Tests (126):
 ```bash
 .venv/bin/python -m pytest -q
 ```
@@ -254,10 +258,13 @@ Regenerate every transcript (~3 min):
 ```bash
 bash scripts/run_all_demos.sh
 ```
-Start the API:
+Start the API **and UI**, then open http://localhost:8000 :
 ```bash
 .venv/bin/uvicorn app.api:app --port 8000
 ```
+The UI shows each answer plus what happened under the hood: guardrail events, sources, the appointment card
+with its escalation score, the Autogen review verdict, token cost, cache hit and trace ID. It can also add a policy
+document. Plain HTML/JavaScript served by FastAPI; no extra install, no internet.
 Ask a question:
 ```bash
 curl -s -X POST localhost:8000/ask -H 'Content-Type: application/json' -d '{"question": "How late can I cancel?", "session_id": "demo"}'
@@ -298,5 +305,6 @@ app/  config · kb · rag (chunking, Chroma, retrieval, generation, cache) · to
 eval/                      query sets, chunking eval, judge, results JSON
 scripts/                   one runnable demo per task + run_all_demos.sh + download_models.py
 transcripts/               committed outputs proving every task
-tests/                     122 pytest tests
+app/static/index.html      chat UI
+tests/                     126 pytest tests
 ```

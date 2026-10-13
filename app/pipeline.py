@@ -34,6 +34,20 @@ def _respond(question: str, history: list[BaseMessage]) -> AIMessage:
         final = CrewResponse(answer=recalled, intents=["conversation"], grounded=True)
         return _message(final, question, events, None, 0)
 
+    # Red-flag triage FIRST and deterministically: an emergency answer must not depend on a borderline
+    # retrieval or answerability score (found in UI testing: "can I book a video consultation?" with chest
+    # pain passed answerability and appended telemedicine advice). Emergency notice only; crew not run.
+    flags = detect_red_flags(question)
+    if flags:
+        events.append(f"red_flag_emergency: {flags} -> emergency notice only, crew skipped")
+        final = CrewResponse(answer=f"This may be a medical emergency. {EMERGENCY_NOTICE}",
+                             intents=["policy"], grounded=True, sources=[EMERGENCY_DOC_ID])
+        context = [{"doc_id": EMERGENCY_DOC_ID, "text": EMERGENCY_NOTICE}]
+        outcome = review_draft(question, final.answer, context, None)
+        events.append(f"review: {'approved unchanged' if outcome.verdict.approved else 'revised'}")
+        return _message(final, question, events, None, outcome.llm_calls,
+                        review=outcome.verdict.model_dump(), tokens=outcome.tokens_used)
+
     resolved, remembered = contextualize(question, history)
     if remembered:
         events.append(f"memory: resolved reference to {remembered}")
@@ -59,12 +73,6 @@ def _respond(question: str, history: list[BaseMessage]) -> AIMessage:
     if REFERENCE_PATTERN.search(question) and remembered is None and final.appointment is None:
         final = final.model_copy(update={"answer": f"{final.answer} {ASK_FOR_ID}"})
 
-    flags = detect_red_flags(question)
-    if flags:
-        events.append(f"red_flag_emergency: {flags}")
-        final = final.model_copy(update={
-            "answer": f"This may be a medical emergency. {EMERGENCY_NOTICE} {final.answer}",
-            "sources": [EMERGENCY_DOC_ID] + [s for s in final.sources if s != EMERGENCY_DOC_ID]})
 
     # Task 14: independent Autogen review of the draft against the retrieved context.
     context = policy["context"] if policy else []

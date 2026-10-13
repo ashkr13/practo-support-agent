@@ -4,12 +4,16 @@
 
 ## 1. Request flow
 ```
-client ──► FastAPI  (POST /ask · POST /add-document · WS /ws/chat)
+client / UI ──► FastAPI  (GET / · POST /ask · POST /add-document · WS /ws/chat)
              │  trace_id + timer start
+             ▼
+      [Input guardrail] mask phone numbers (first, so even rejected requests are logged masked)
              ▼
       [Runtime governance] token-budget cap ── reject if over budget
              ▼
-      [Input guardrails] mask phone numbers ─► detect prompt injection ── block if injection
+      [Input guardrail] detect prompt injection ── block if injection
+             ▼
+      [Red-flag triage] emergency symptoms → KB emergency notice ONLY (crew skipped)
              ▼
       [Session memory] LangChain InMemoryChatMessageHistory per session_id
              ▼
@@ -20,7 +24,6 @@ client ──► FastAPI  (POST /ask · POST /add-document · WS /ws/chat)
       └────────────────────────────────────────────────────────────────┘
              ▼
       [Output guardrail] groundedness: similarity ≥ calibrated threshold AND cross-encoder answerability ≥ -1.04
-      [Red-flag guardrail] emergency symptoms → KB emergency notice (call 108) first
              ▼
       Autogen RoundRobinGroupChat (max_turns=2, deterministic mock client)
         Policy_Compliance_Reviewer ─► Final_Editor ─► Verdict{approved, final_answer, reason}
@@ -89,11 +92,11 @@ raw text ─► mask_pii (phone → [PHONE_REDACTED]) ─► detect_injection �
                                                         │ clean
                RunnableWithMessageHistory(session_id) ─► _respond(masked question, history)
                  ├─ recall question? → answer from history (no crew call)
+                 ├─ red flags (chest pain, breathing, bleeding, unconsciousness, stroke) → emergency notice only, crew skipped
                  ├─ contextualize: "that appointment"/"it" → last APT-#### in history
                  ├─ run_crew(resolved) → CrewResponse (output_pydantic + validate_crew_output)
                  ├─ check_groundedness (v2): similarity ≥ threshold AND cross-encoder answerability ≥ -1.04
                  │    (appointment IDs stripped first) → else fallback / partial-policy fallback
-                 ├─ red flags (chest pain, breathing, bleeding, unconsciousness, stroke) → KB emergency notice first
                  └─ re-validate CrewResponse → AIMessage (stored in history)
              ─► AgentResponse {question_masked, resolved_question, response, guardrail_events, ...}
 ```
@@ -114,6 +117,7 @@ Error handling: schema-invalid crew output → `InvalidCrewOutput` → safe fall
 ## 10. API contracts (implemented, Milestone 7) — `app/api.py`
 | Endpoint | Request | Response | Errors |
 |---|---|---|---|
+| `GET /` | – | chat UI (`app/static/index.html`, offline, uses `/ws/chat` + `/add-document`) | – |
 | `GET /health` | – | `HealthResponse{status, mock_llm, collections}` | – |
 | `POST /ask` | `AskRequest{question (1–8000 chars, not blank), session_id ^[A-Za-z0-9_-]{1,64}$}` | `AskResponse` = `AgentResponse` + `trace_id` | 422 validation |
 | `POST /add-document` | `AddDocumentRequest{doc_id ^[a-z0-9_]{3,64}$, title, text (2–5 sentences)}`; header `X-Admin-Key` if `ADMIN_API_KEY` set | 201 `AddDocumentResponse{doc_id, chunks_in_collection, cache_cleared, trace_id}` | 401 key, 422 validation/injection |

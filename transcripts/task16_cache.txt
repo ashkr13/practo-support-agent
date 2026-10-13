@@ -1,13 +1,13 @@
 Part A - grounded-generation step directly
   call 1: query='How long will my thyroid test results take?'
           key='how long will my thyroid test results take'
-          cache_hit=False retrieval_calls=1 generator_calls=1 time= 427.144 ms  same_answer_as_call_1=True
+          cache_hit=False retrieval_calls=1 generator_calls=1 time= 199.670 ms  same_answer_as_call_1=True
   call 2: query='How long will my thyroid test results take?'
           key='how long will my thyroid test results take'
-          cache_hit=True  retrieval_calls=0 generator_calls=0 time=   0.015 ms  same_answer_as_call_1=True
+          cache_hit=True  retrieval_calls=0 generator_calls=0 time=   0.011 ms  same_answer_as_call_1=True
   call 3: query='  how long will my THYROID test results take  '
           key='how long will my thyroid test results take'
-          cache_hit=True  retrieval_calls=0 generator_calls=0 time=   0.006 ms  same_answer_as_call_1=True
+          cache_hit=True  retrieval_calls=0 generator_calls=0 time=   0.003 ms  same_answer_as_call_1=True
   cache stats: {'hits': 2, 'misses': 1}
 
 Part B - full pipeline (crew -> rag_lookup tool), repeated question in a fresh session

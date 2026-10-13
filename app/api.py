@@ -1,5 +1,6 @@
 """FastAPI deployment (Task 11) with structured JSON-Lines logging (Task 12).
 
+  GET  /                chat UI (app/static/index.html)
   GET  /health          liveness + index sizes
   POST /ask             one patient turn (AskRequest -> AskResponse)
   POST /add-document    add a policy document to the knowledge base (AddDocumentRequest -> AddDocumentResponse)
@@ -16,10 +17,11 @@ import os
 import time
 import uuid
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Header, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from app import config, rag
@@ -130,6 +132,15 @@ def _summary(r: AgentResponse) -> dict:
 
 
 # ---------------------------------------------------------------- endpoints
+
+UI_PAGE = Path(__file__).resolve().parent / "static" / "index.html"
+
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+def ui() -> HTMLResponse:
+    """Single-page chat UI: talks to /ws/chat and /add-document; no external assets, works offline."""
+    return HTMLResponse(UI_PAGE.read_text(encoding="utf-8"))
+
 
 @app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:

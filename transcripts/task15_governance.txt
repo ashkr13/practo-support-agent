@@ -51,7 +51,7 @@ RUNTIME LAYER - per-request token budget
   Normal requests (estimate is checked against actual counted usage):
     q_chars=  43 estimated= 6132 actual= 4219 within_estimate=True blocked=False
     q_chars=  63 estimated= 6192 actual= 5327 within_estimate=True blocked=False
-    q_chars= 456 estimated= 7368 actual= 5712 within_estimate=True blocked=False
+    q_chars= 456 estimated= 7368 actual=  681 within_estimate=True blocked=False
 
   Deliberately oversized request (6120 chars):
     blocked=True estimated=24360 llm_calls=0 tool_calls=0
