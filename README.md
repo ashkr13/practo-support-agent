@@ -179,6 +179,18 @@ How we got here (full history kept for transparency):
 | v2 rule (cross-encoder) | A | **no** (used to design v2) | 15/15 | 4.87 | 5.00 | 4.60 | 5.00 |
 | **v2 rule — official** | **B** | **yes** | **13/15** | **4.07** | **5.00** | **3.67** | **5.00** |
 | v2 + B14 bug fix | B | no (post-fix re-run) | 14/15 | 4.33 | 5.00 | 3.93 | 5.00 |
+| v2 + B14 fix + **B08 amended** (see below) | B | no (post-amendment re-run) | 14/15 | 4.33 | 5.00 | 3.93 | 5.00 |
+
+**Amendment to set B (4 Nov 2026).** The programme team clarified that the test query for the *emergency visit
+protocol* topic must go through the crew and return a grounded answer. The original B08 ("My uncle fainted and is
+not waking up…") contains emergency red-flag words, so the deterministic triage answers it first and the crew is
+skipped. B08 was therefore replaced by *"Do I need to pay or book anything first in an emergency?"* (expect:
+grounded answer, fact "prepayment"; source `08_emergency_visits`; no red-flag words). This was a requirement
+change, not score tuning: the averages are identical before and after. The set-B file hash changed from
+`d2ed211c…a251` (original B08) to `8f0e89c5…789d`; the original official run is kept unchanged in
+[`task13_evaluation_v2_setB_heldout.txt`](transcripts/task13_evaluation_v2_setB_heldout.txt) and the amended
+run is in [`task13_evaluation_v2_setB_amended_B08.txt`](transcripts/task13_evaluation_v2_setB_amended_B08.txt).
+Emergency red-flag triage itself is unchanged and is still demonstrated in `task10_guardrails.txt` and set A (E08).
 
 \* after fixing a judge bug (approved refusal templates were not recognised); disclosed in the transcript.
 v1 overfitted to development questions (5/12 good questions refused over words like "far", "money", "extra").
