@@ -31,7 +31,7 @@ Test suite: **126 passed** (`.venv/bin/python -m pytest -q`), also verified in a
 |---|---|---|---|---|
 | 11 | ≥2 HTTP endpoints + 1 WebSocket surviving disconnect, Pydantic models | `app/api.py` (`/health`, `/ask`, `/add-document`, `/ws/chat`; plus UI at `/`, `app/static/index.html`) | `test_api.py` (13 test functions, 19 cases incl. `::test_ui_page_served_and_self_contained`, `::test_websocket_disconnect_mid_conversation_server_survives`) | `task11_12_api_and_logging.txt` (real uvicorn; close code 1006) |
 | 12 | One JSONL entry per request with trace ID; no raw fixed-format PII on disk | `app/logging_utils.py`, middleware in `app/api.py` | `test_api.py::test_every_http_request_logs_one_jsonl_entry`, `::test_phone_number_never_reaches_disk` | `task11_12_api_and_logging.txt` |
-| 13 | 4 scores per query for 15 queries (every topic + ≥2 OOS/edge) + averages, under MOCK_LLM | `eval/eval_set_b.py`, `eval/judge.py`, `scripts/task13_evaluate.py` | (evaluation script; judge rubric documented in `eval/judge.py`) | **`task13_evaluation_v2_setB_heldout.txt`** (official), plus `…v1_setA.txt`, `…v2_setA_dev.txt`, `…v2_setB_postfix.txt` |
+| 13 | 4 scores per query for 15 queries (every topic + ≥2 OOS/edge) + averages, under MOCK_LLM | `eval/eval_set_b.py`, `eval/judge.py`, `scripts/task13_evaluate.py` | (evaluation script; judge rubric documented in `eval/judge.py`) | **`task13_evaluation_v2_setB_amended_B08.txt`** (current: all 12 topic queries incl. the emergency topic go through the crew with grounded answers; B08 amendment explained in README §5), plus the original official run `…v2_setB_heldout.txt`, `…v1_setA.txt`, `…v2_setA_dev.txt`, `…v2_setB_postfix.txt` |
 
 ## Part 4 — Resilience & governance
 
